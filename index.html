@@ -1166,6 +1166,7 @@ for await query in searchField.textChanges.debounce(for: .milliseconds(300)) {
     transitionSpeed: 'fast',
     backgroundTransition: 'fade',
     center: false,
+    controls: false,
     plugins: [RevealHighlight],
     highlight: {
       beforeHighlight: hljs => hljs.registerLanguage('swift', function(hljs) {

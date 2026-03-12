@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" id="theme" />
+  <!-- Minimal highlight.js base — we override with Xcode colors below -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css" />
 
   <!-- Geist — Vercel's font, closest open alternative to SF Pro -->
@@ -94,8 +95,8 @@
     }
 
     .ic {
-      background: rgba(0,0,0,0.05);
-      color: var(--gray-900);
+      background: rgba(173, 61, 164, 0.08);
+      color: #9B2393;
       padding: 0.1em 0.45em;
       border-radius: 5px;
       font-family: 'Geist Mono', 'SF Mono', Menlo, monospace;
@@ -281,6 +282,61 @@
     /* ── Center helper ── */
     .centered {
       text-align: center !important;
+    }
+
+    /* ── Xcode Default (Light) syntax colors ── */
+    .reveal pre code.hljs {
+      background: var(--card);
+      color: #000000;
+    }
+
+    .hljs-keyword {
+      color: #AD3DA4 !important;   /* Xcode keywords — magenta/purple */
+      font-weight: 600 !important;
+    }
+
+    .hljs-type {
+      color: #4B21B0 !important;   /* Xcode types — dark purple */
+      font-weight: 400 !important;
+    }
+
+    .hljs-string {
+      color: #D12F1B !important;   /* Xcode strings — red */
+      font-weight: 400 !important;
+    }
+
+    .hljs-number {
+      color: #272AD8 !important;   /* Xcode numbers — blue */
+      font-weight: 400 !important;
+    }
+
+    .hljs-comment {
+      color: #707F8C !important;   /* Xcode comments — gray-green */
+      font-style: italic !important;
+      font-weight: 400 !important;
+    }
+
+    .hljs-literal {
+      color: #AD3DA4 !important;   /* Xcode true/false/nil — same as keywords */
+      font-weight: 600 !important;
+    }
+
+    .hljs-built_in {
+      color: #3E8087 !important;   /* Xcode project/SDK functions — teal */
+      font-weight: 400 !important;
+    }
+
+    .hljs-title {
+      color: #326D74 !important;   /* Xcode function/method names — dark teal */
+      font-weight: 400 !important;
+    }
+
+    .hljs-params {
+      color: #000000 !important;   /* Xcode parameters — plain */
+    }
+
+    .hljs-meta {
+      color: #643820 !important;   /* Xcode preprocessor — brown */
     }
   </style>
 </head>
@@ -1115,18 +1171,33 @@ for await query in searchField.textChanges.debounce(for: .milliseconds(300)) {
       beforeHighlight: hljs => hljs.registerLanguage('swift', function(hljs) {
         return {
           keywords: {
-            keyword: 'actor async await throw throws try catch let var func struct class enum protocol extension import return if else guard for in while switch case default break continue where as is self Self super init deinit subscript typealias associatedtype some any do defer repeat nonisolated private public',
-            type: 'Int String Bool Double Float Array Dictionary Set Optional Data URL Task TaskGroup MainActor Sendable Error Void Never UInt Image View ObservableObject Published State',
+            keyword: 'actor async await throw throws try catch let var func struct class enum protocol extension import return if else guard for in while switch case default break continue where as is self Self super init deinit subscript typealias associatedtype some any do defer repeat nonisolated private public internal fileprivate open override mutating nonmutating static final required convenience dynamic lazy weak unowned inout concurrent',
+            type: 'Int String Bool Double Float Array Dictionary Set Optional Data URL Task TaskGroup MainActor Sendable Error Void Never UInt Image View ObservableObject Published State UIImage CLLocation LAContext NSLock NSThread FileHandle URLSession DispatchQueue DispatchSemaphore JSONDecoder Date TimeInterval Owner Videogame UserInfo CodingKeys AsyncStream AsyncSequence',
             literal: 'true false nil',
-            built_in: 'print withTaskGroup withThrowingTaskGroup withCheckedContinuation withCheckedThrowingContinuation withUnsafeContinuation withUnsafeThrowingContinuation',
+            built_in: 'print withTaskGroup withThrowingTaskGroup withCheckedContinuation withCheckedThrowingContinuation withUnsafeContinuation withUnsafeThrowingContinuation merge zip combineLatest debounce throttle',
           },
           contains: [
             hljs.C_LINE_COMMENT_MODE,
             hljs.C_BLOCK_COMMENT_MODE,
-            hljs.QUOTE_STRING_MODE,
+            {
+              className: 'string',
+              begin: '"', end: '"',
+              contains: [
+                { begin: /\\[\\0tnr"']/ },
+                { begin: /\\(/, end: /\)/, keywords: { keyword: 'self' } }
+              ]
+            },
             hljs.NUMBER_MODE,
             { className: 'keyword', begin: /@\w+/ },
             { className: 'keyword', begin: /\basync\s+let\b/ },
+            {
+              className: 'title',
+              begin: /(?<=func\s)\w+/
+            },
+            {
+              className: 'type',
+              begin: /\b[A-Z][A-Za-z0-9]*(?=[\.<\?\!,\)\s\{])/
+            },
           ]
         };
       })

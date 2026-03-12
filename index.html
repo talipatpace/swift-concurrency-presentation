@@ -1179,24 +1179,13 @@ for await query in searchField.textChanges.debounce(for: .milliseconds(300)) {
           contains: [
             hljs.C_LINE_COMMENT_MODE,
             hljs.C_BLOCK_COMMENT_MODE,
-            {
-              className: 'string',
-              begin: '"', end: '"',
-              contains: [
-                { begin: /\\[\\0tnr"']/ },
-                { begin: /\\(/, end: /\)/, keywords: { keyword: 'self' } }
-              ]
-            },
+            hljs.QUOTE_STRING_MODE,
             hljs.NUMBER_MODE,
             { className: 'keyword', begin: /@\w+/ },
             { className: 'keyword', begin: /\basync\s+let\b/ },
             {
-              className: 'title',
-              begin: /(?<=func\s)\w+/
-            },
-            {
               className: 'type',
-              begin: /\b[A-Z][A-Za-z0-9]*(?=[\.<\?\!,\)\s\{])/
+              begin: /\b[A-Z][A-Za-z0-9]+\b/
             },
           ]
         };
